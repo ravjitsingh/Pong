@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--- Pong - HTML remake by Ravjit Singh --->
+<html>
+<title>Pong, A Classic</title>
+<link href='https://fonts.googleapis.com/css?family=Allerta' rel='stylesheet'>
+
+<style>
+body {
+	font-family: 'Allerta';
+	font-size: 18px;
+}
+</style>
+
+<body bgcolor=#ffc34d>
+
+<center>
+  <strong><h1>Pong</h1></strong>
+   <p>Use your mouse to control the left flipper and beat the Computer!</p>
+  <canvas id="gameCanvas" height="600" width="800"></canvas>
+  <script>
+      var canvas;
+      var canvasContext;
+      var ballX = 50;
+      var ballSpeed = 10;
+      var ballY = 50;
+      var ballSpeedY = 4;
+      var paddle1Y = 250;
+      var paddle2Y = 250;
+      var player1 = 0;
+      var player2 = 0;
+
+      const PADDLE_HEIGTH = 100;
+      
+      function calculateMousePosition(evt){
+            var rect = canvas.getBoundingClientRect();
+            var root =document.documentElement;
+            var mouseX = evt.clientX - rect.left - root.scrollLeft;
+            var mouseY = evt.clientY - rect.top - root.scrollTop;
+            return{
+                  x:mouseX,
+                  y:mouseY
+            };
+       }
+      window.onload = function()
+      {
+      	canvas = document.getElementById('gameCanvas');
+      	canvasContext = canvas.getContext('2d');
+      	var framesPerSecond = 30;
+            setInterval(call, 1000/framesPerSecond);
+            canvas.addEventListener('mousemove', function(evt){
+                  var mousePos = calculateMousePosition(evt);
+                  paddle1Y= mousePos.y-(PADDLE_HEIGTH/2);
+            })
+      }
+      function call()
+      {
+            move();
+            draw();
+      }
+      function computerMovement()
+      { 
+            var paddle2YCenter = paddle2Y + (PADDLE_HEIGTH/2);
+            if(paddle2YCenter < ballY-35)
+            {
+                  paddle2Y+=6;
+            }
+            else if(paddle2YCenter > ballY+35){
+                  paddle2Y-=6;
+            }
+
+      }
+      function move()
+      {
+       computerMovement();
+       ballX+=ballSpeed;
+       ballY+=ballSpeedY;     
+       if(ballX < 0){
+           if(ballY > paddle1Y && ballY < paddle1Y+PADDLE_HEIGTH )
+            {
+                  ballSpeed = -ballSpeed;
+
+            }
+            else{
+                  ballReset();
+                  player2+=1;
+            }
+            
+       }
+       if(ballX > canvas.width){
+            
+           if(ballY > paddle2Y && ballY < paddle2Y+PADDLE_HEIGTH )
+            {
+                  ballSpeed = -ballSpeed;
+
+            }
+            else{
+                  ballReset();
+                  player1+=1;
+
+            }
+       }
+         if(ballY < 0){
+            ballSpeedY = -ballSpeedY;
+       }
+       if(ballY > canvas.height){
+            ballSpeedY = -ballSpeedY;
+       }    
+      }
+      function ballReset(){
+            ballSpeed = -ballSpeed;
+            ballX = canvas.width/2;
+            ballY = canvas.height/2;
+      }
+       function draw(){
+            
+            color(0,0,canvas.width,canvas.height,'black');
+            color(0,paddle1Y,10,PADDLE_HEIGTH,'white');
+            color(790,paddle2Y,10,PADDLE_HEIGTH,'white');
+            circleColor(ballX, ballY, 10, 'white');
+            canvasContext.fillText(player1,100,100);
+            canvasContext.fillText(player2,canvas.width-100,canvas.height-100);
+       }
+       function color(leftX, topY, width, height, color)
+       {
+                  canvasContext.fillStyle = color;
+                  canvasContext.fillRect(leftX, topY, width, height);
+       }
+	function circleColor(centerX, centerY, radius, color)
+      { 
+            canvasContext.fillStyle=color;
+            canvasContext.beginPath();
+            canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
+            canvasContext.fill();
+          
+
+      }
+      </script>
+	<p>2017, Ravjit Singh</p>
+	<p>Based on 'Pong' by Atari, Inc </p>
+   </center>
+</body>
+</html>
